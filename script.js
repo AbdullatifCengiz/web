@@ -6,6 +6,16 @@ document.addEventListener('DOMContentLoaded', function() {
     menuToggle.addEventListener('click', function() {
         this.classList.toggle('active');
         navLinks.classList.toggle('active');
+        
+        if (navLinks.classList.contains('active')) {
+            gsap.from('.nav-link', {
+                duration: 0.5,
+                y: 20,
+                opacity: 0,
+                stagger: 0.1,
+                ease: "power3.out"
+            });
+        }
     });
     
     // Close mobile menu when clicking a link
@@ -68,18 +78,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Form submission
-    const appointmentForm = document.querySelector('.appointment-form form');
-    
-    if (appointmentForm) {
-        appointmentForm.addEventListener('submit', function(e) {
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Here you would typically send the form data to a server
-            // For demo purposes, we'll just show an alert
-            alert('Randevunuz başarıyla oluşturuldu! Sizinle iletişime geçeceğiz.');
+            // Form verilerini topla
+            const formData = new FormData(this);
+            
+            // Burada AJAX ile sunucuya gönderme yapılabilir
+            // Örnek amaçlı sadece teşekkür mesajı gösteriyoruz
+            Swal.fire({
+                title: 'Teşekkürler!',
+                text: 'Mesajınız başarıyla gönderildi. En kısa sürede sizinle iletişime geçeceğiz.',
+                icon: 'success',
+                confirmButtonColor: 'var(--primary)'
+            });
+            
             this.reset();
         });
-    }
+    });
     
     // Current year in footer
     const yearElement = document.querySelector('.footer-bottom p');
@@ -113,6 +131,32 @@ document.addEventListener('DOMContentLoaded', function() {
         card.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0)';
             this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.05)';
+        });
+    });
+
+    // Parallax Efekti
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.pageYOffset;
+            hero.style.backgroundPositionY = scrollPosition * 0.5 + 'px';
+        });
+    }
+
+    // Scroll Animasyonları
+    gsap.registerPlugin(ScrollTrigger);
+    
+    gsap.utils.toArray('.service-card').forEach(card => {
+        gsap.from(card, {
+            scrollTrigger: {
+                trigger: card,
+                start: "top 80%",
+                toggleActions: "play none none none"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out"
         });
     });
 });
